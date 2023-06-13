@@ -1,5 +1,9 @@
 # ific-dune-saorme/dichroicFilters
 
+## TransversalMotorAndAngularStepper
+
+Arduino code to manage both transversal and angular motors.
+
 ## DFRepo
 
 Repository with several functions defined to read and analize dichroic filters measurements.
