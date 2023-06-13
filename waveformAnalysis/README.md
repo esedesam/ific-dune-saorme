@@ -3,6 +3,9 @@
 To work with the waveforms, we define some preprocessing steps.
 The main issue is to number each waveform in the data file so they are easier to manage with.
 
+Raw data must be stored into a folder named 'rawData' in the directory of this README.md
+(D:\ific-dune-saorme\waveformAnalysis\rawData).
+
 ## WFAnalysis_repo
 
 Repository with several functions defined to read and analize waveforms and gain of the siPMs.

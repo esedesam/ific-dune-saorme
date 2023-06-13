@@ -23,7 +23,7 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = '3k_sigtrig' # example: '3k_sigtrig'
+fileName = 'sam_34v_3k_135v' # example: '3k_sigtrig'
 
 filePath = zeroPath + 'results/' + fileName + '/'
 fileExt = '.csv'
@@ -157,7 +157,7 @@ if not indFigs:
     qScale = 10**9
     gaussParams = doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
                                     minPeakHeight = 0.12 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
-                                    minCenterDist = 80, printResult = printResults, doPlot = True, saveFig = saveFigs)
+                                    minCenterDist = 20, printResult = printResults, doPlot = True, saveFig = saveFigs)
     
     # LINEAR FIT OF CENTROIDS
     doCentroidsLinearFit(gaussParams, qScale, nBins, figurePath, fileName,\

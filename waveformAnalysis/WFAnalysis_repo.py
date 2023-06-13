@@ -293,7 +293,7 @@ def doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
         print('No peaks detected. Change minimum height (current: ' + str(minPeakHeight) + ')')
     else:
         centers = scaledCharge[histPeaks]
-        sigmas = np.ones(len(centers)) * 0.35 # 0.01
+        sigmas = np.ones(len(centers)) * 0.1 # 0.35 # 0.01
 
         model = GaussianModel(prefix = 'g1_')
         for idx in range(1, histPeakNum):
