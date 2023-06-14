@@ -287,7 +287,7 @@ def doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
 
     histPeaks, _ = find_peaks(FrecVsCharge['F'], height = minPeakHeight, distance = minCenterDist) # Find histogram peaks
     histPeakNum = len(histPeaks)
-    print('No. of peaks detected: %d' % histPeakNum)
+    print('No. of peaks detected in charge histogram: %d' % histPeakNum)
 
     if histPeakNum < 1:
         print('No peaks detected. Change minimum height (current: ' + str(minPeakHeight) + ')')
@@ -307,9 +307,9 @@ def doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
                             ('g' + str(idx + 1) + '_sigma', sigmas[idx], True, 0.0, 1, None, None))
 
     result = model.fit(frecuency, params, x = scaledCharge)
+    report = result.fit_report()
+    print(report)
     if printResult:
-        report = result.fit_report()
-        print(report)
         reportName = figurePath + fileName + 'Hist' + str(nBins) + 'FitReport.txt'
         if not isfile(reportName):
             reportFile = open(reportName, 'x')
@@ -356,9 +356,9 @@ def doCentroidsLinearFit(gaussParams, qScale, nBins, figurePath, fileName,\
         model = LinearModel()
         params = model.make_params(m = 1, b = 0)
         result = model.fit(auxCentroids, params, x = auxNums)
+        report = result.fit_report()
+        print(report)
         if printResult:
-            report = result.fit_report()
-            print(report)
             reportName = figurePath + fileName + 'Hist' + str(nBins) + 'CentroidsFitReport.txt'
             if not isfile(reportName):
                 reportFile = open(reportName, 'x')
