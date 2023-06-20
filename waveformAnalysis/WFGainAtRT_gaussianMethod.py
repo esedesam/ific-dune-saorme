@@ -13,7 +13,7 @@ import numpy as np
 from scipy.signal import find_peaks
 from os.path import isfile
 from timeit import default_timer as timer
-from lmfit.models import GaussianModel, LinearModel
+from lmfit.models import GaussianModel, LinearModel, QuadraticModel
 from WFAnalysis_repo import *
 
 # INIT TIMER
@@ -51,7 +51,7 @@ qScale = 10**9
 #####################################################################
 
 # GET DATA, PROCESS AND HISTOGRAM
-fitHist = False # False -> plot histograms | True -> fit histograms and get gain
+fitHist = True # False -> plot histograms | True -> fit histograms and get gain
 centroidList = np.zeros(len(fileNameList))
 centroidListError = np.zeros(len(fileNameList))
 sigmaListError = np.zeros(len(fileNameList))
@@ -94,7 +94,7 @@ for idx, fileName in enumerate(fileNameList):
                         ('sigma', 5, True, 0.0, None, None, None))
         result = model.fit(frec, params, x = binCenters)
         if False:
-            report = result.fit_report()
+            report = result.fit_report() # Report of each gaussian fit
             reportName = figurePath + fileName + 'Hist' + str(nBins) + 'FitReport.txt'
             if not isfile(reportName):
                 reportFile = open(reportName, 'x')
@@ -147,6 +147,28 @@ else:
     plt.ylabel('sigma^2 / nC^2')
     plt.legend()
     plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFit.png', bbox_inches = 'tight')
+
+    # Quad fit of gaussian params
+    model = QuadraticModel()
+    params = model.make_params(a = 1, b = 1, c = 0)
+    result = model.fit(sigmaList, params, x = centroidList)
+    if printResults:
+        report = result.fit_report()
+        reportName = figurePath + groupName + str(nBins) + 'FitCentroidsFitQuadReport.txt'
+        if not isfile(reportName):
+            reportFile = open(reportName, 'x')
+        else:
+            reportFile = open(reportName, 'wt')
+        reportFile.write(report)
+        reportFile.close()
+    plt.figure()
+    # plt.plot(centroidList, sigmaList, '.', label = 'Gaussian fit results')
+    plt.errorbar(centroidList, sigmaList, sigmaListError, centroidListError, '.', label = 'Gaussian fit results')
+    plt.plot(centroidList, result.best_fit, '-', label = 'Quad fit')
+    plt.xlabel('centroid / nC')
+    plt.ylabel('sigma^2 / nC^2')
+    plt.legend()
+    plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFitQuad.png', bbox_inches = 'tight')
 
 # END AND PRINT TIMER
 timerEnd = timer()
