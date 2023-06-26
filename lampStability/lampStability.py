@@ -14,7 +14,7 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/lampStability/' # Change to user repo path
-series = '20230619_deuterium'
+series = '20230621_deuteriumPMT'
 filePath = zeroPath + series + '/'
 noFilter = 'nofilter'
 WLStart = 180
@@ -25,7 +25,14 @@ angle = 0
 fileExt = '.txt'
 fileTag = 'Data'
 
-numSeries = 33
+if series == '20230619_deuterium':
+    lastSeries = 33
+elif series == '20230621_deuterium':
+    lastSeries = 26
+elif series == '20230621_deuteriumPMT':
+    lastSeries = 36
+else:
+    print('No. of series needed.')
 
 saveFigs = True
 # printResults = False
@@ -39,10 +46,10 @@ if not isdir(figurePath):
 # LOAD AND PLOT DATA
 timestamps = []
 plt.figure()
-for num in range(0, numSeries):
+for num in range(0, lastSeries):
     fileName = 'df_' + noFilter + '_' + str(angle) + 'deg_' + WLRange + ' (' + str(num) + ')'
     data, darkCurrent, dateAndTime = loadLampData(filePath, fileName)
-    plt.errorbar(data['WL'], data['I'], data['RMS'], None, '-')
+    plt.errorbar(data['WL'], 10**6 * data['I'], data['RMS'], None, '-')
     timestamps.append(dateAndTime)
 timeDiff, timeDiffLg = getTimeDiff(timestamps)
 plt.xlabel('wavelenght / nm')
@@ -56,12 +63,12 @@ plt.figure()
 for idx, wl in enumerate(range(WLStart, WLEnd + 1, WLStep)):
     IList = []
     errorList = []
-    for num in range(0, numSeries):
+    for num in range(0, lastSeries):
         fileName = 'df_' + noFilter + '_' + str(angle) + 'deg_' + WLRange + ' (' + str(num) + ')'
         data, darkCurrent, dateAndTime = loadLampData(filePath, fileName, substractDC = False)
         IList.append(data.loc[idx, 'I'])
         errorList.append(data.loc[idx, 'RMS'])
-    plt.errorbar(timeDiff, IList, errorList, None, '-', label = f'{wl} nm')
+    plt.errorbar(timeDiff, 10**6 * np.asarray(IList), errorList, None, '-', label = f'{wl} nm')
 plt.xlabel('time / min')
 plt.ylabel('I / \u03BCA')
 plt.legend(bbox_to_anchor=(1, 1))
@@ -71,7 +78,7 @@ if saveFigs:
 # RATIOS
 # Calculation
 LSRatioData = ps.DataFrame()
-for num in range(0, numSeries):
+for num in range(0, lastSeries):
     fileName = 'df_' + noFilter + '_' + str(angle) + 'deg_' + WLRange + ' (' + str(num) + ')'
     data, darkCurrent, dateAndTime = loadLampData(filePath, fileName)
     if num == 0:
@@ -83,7 +90,7 @@ for num in range(0, numSeries):
             sqrt((data['RMS'] / data['I'])**2 + (refDataErr / refData)**2)
 # Plot
 plt.figure()
-for num in range(0, numSeries):
+for num in range(0, lastSeries):
     plt.errorbar(LSRatioData['WL'], LSRatioData['Ratio' + str(num)],\
                  LSRatioData['Error' + str(num)], None, '-', label = timeDiffLg[num])
 plt.xlabel('wavelenght / nm')
@@ -95,7 +102,7 @@ if saveFigs:
 # # RELATIVE ERRORS
 # # Calculation
 # LSRelErrData = ps.DataFrame()
-# for num in range(0, numSeries):
+# for num in range(0, lastSeries):
 #     fileName = 'df_' + noFilter + '_' + str(angle) + 'deg_' + WLRange + ' (' + str(num) + ')'
 #     data, darkCurrent, dateAndTime = loadLampData(filePath, fileName)
 #     if num == 0:
@@ -108,7 +115,7 @@ if saveFigs:
 #                                                 + (refDataErr / refData)**2)
 # # Plot
 # plt.figure()
-# for num in range(1, numSeries):
+# for num in range(1, lastSeries):
 #     plt.errorbar(LSRelErrData['WL'], LSRelErrData['RelErr' + str(num) + ' / %'],\
 #                  LSRelErrData['Error' + str(num)], None, '-', label = timeDiffLg[num])
 # plt.xlabel('wavelenght / nm')
@@ -122,7 +129,7 @@ plt.figure()
 for idx, wl in enumerate(range(WLStart, WLEnd + 1, WLStep)):
     ratioList = []
     errorList = []
-    for num in range(0, numSeries):
+    for num in range(0, lastSeries):
         ratioList.append(LSRatioData.loc[idx, 'Ratio' + str(num)])
         errorList.append(LSRatioData.loc[idx, 'Error' + str(num)])
     plt.errorbar(timeDiff, ratioList, errorList, None, '-', label = f'{wl} nm') # timeDiff[1:]

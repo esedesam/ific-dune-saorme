@@ -10,19 +10,19 @@ def loadLampData(filePath, fileName, fileExt = '.txt', fileTag = 'Data', \
     # Get header information
     # headerLimit = headerLimit - 1
     if readHeader:
-        DFHeader = ps.read_csv(filePath + fileName + fileExt, nrows = headerLimit + 2, header = None,\
+        DFHeader = ps.read_csv(filePath + fileName + fileExt, nrows = headerLimit + 2, header = 1,\
                                delim_whitespace = True, names = ['a', 'b', 'c']) 
-        for row in range(headerLimit):
+        for row in range(headerLimit - 1):
             if DFHeader.iloc[row,0] == 'DC':
                 DCValue = DFHeader.iloc[row,1]
                 DCError = DFHeader.iloc[row,2]
                 darkCurrent = np.asarray([DCValue, DCError], dtype = 'float64')
             if DFHeader.iloc[row,0] == 'Time' and DFHeader.iloc[row,1] == 'Ini:':
-                dateAndTime = DFHeader.iloc[row,2]
+                dateAndTime = DFHeader.iloc[row, 2]
 
     # Get WaveForms data
     DFData = ps.read_csv(filePath + fileName + fileExt, header = headerLimit,\
-                         engine='python', skipfooter = 1,\
+                         engine = 'python', skipfooter = 1,\
                          dtype = np.float64, delim_whitespace = True)
     if substractDC:
         DFData['I'] = DFData['I'] - darkCurrent[0]
