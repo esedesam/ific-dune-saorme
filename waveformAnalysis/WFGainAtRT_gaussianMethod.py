@@ -24,11 +24,21 @@ zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
 # groupName = 'g_rt'
 # fileNameList = ['3k_ch0_380_rt', '3k_ch0_393_rt', '3k_ch0_400_rt', '3k_ch0_410_rt']
 # voltList = [3.80, 3.93, 4.00, 4.10]
-groupName = 'g_rt_sam'
-fileNameList = ['sam_34v_3k_131v', 'sam_34v_3k_135v', 'sam_34v_3k_140v', 'sam_34v_3k_145v', 'sam_34v_3k_150v',\
-                'sam_34v_3k_155v', 'sam_34v_3k_160v', 'sam_34v_3k_165v', 'sam_34v_3k_170v', 'sam_34v_3k_180v',\
-                'sam_34v_3k_185v', 'sam_34v_3k_200v', 'sam_34v_3k_210v', 'sam_34v_3k_220v', 'sam_34v_3k_250v']
-voltList = [1.31, 1.35, 1.40, 1.45, 1.50, 1.55, 1.60, 1.65, 1.70, 1.80, 1.85, 2.00, 2.10, 2.20, 2.50]
+# groupName = 'g_rt_sam'
+# fileNameList = ['sam_34v_3k_131v', 'sam_34v_3k_135v', 'sam_34v_3k_140v', 'sam_34v_3k_145v', 'sam_34v_3k_150v',\
+#                 'sam_34v_3k_155v', 'sam_34v_3k_160v', 'sam_34v_3k_165v', 'sam_34v_3k_170v', 'sam_34v_3k_180v',\
+#                 'sam_34v_3k_185v', 'sam_34v_3k_200v', 'sam_34v_3k_210v', 'sam_34v_3k_220v', 'sam_34v_3k_250v']
+# voltList = [1.31, 1.35, 1.40, 1.45, 1.50, 1.55, 1.60, 1.65, 1.70, 1.80, 1.85, 2.00, 2.10, 2.20, 2.50]
+# groupName = 'g_rt_20230621'
+# fileNameList = ['20230621_34v_3k_131v', '20230621_34v_3k_140v', '20230621_34v_3k_150v',\
+#                 '20230621_34v_3k_160v', '20230621_34v_3k_170v', '20230621_34v_3k_180v',\
+#                 '20230621_34v_3k_200v', '20230621_34v_3k_210v', '20230621_34v_3k_220v']
+# voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 2.00, 2.10, 2.20]
+groupName = 'g_rt_mas'
+fileNameList = ['mas_34v_3k_131v', 'mas_34v_3k_140v', 'mas_34v_3k_150v',\
+                'mas_34v_3k_160v', 'mas_34v_3k_170v', 'mas_34v_3k_180v',\
+                'mas_34v_3k_190v', 'mas_34v_3k_200v', 'mas_34v_3k_210v']
+voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 1.90, 2.00, 2.10]
 
 filePath = zeroPath + 'results/' + groupName + '/'
 fileExt = '.csv'

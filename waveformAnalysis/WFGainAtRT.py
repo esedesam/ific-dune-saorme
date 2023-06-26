@@ -35,7 +35,7 @@ fileTag = 'Numbered'
 figurePath = filePath + 'figures/'
 
 # Optional figures(.png) and results(.txt) saving
-saveFigs = False
+saveFigs = True
 printResults = False
 
 voltageThreshold = 0.01 # 10 mV
@@ -173,7 +173,7 @@ if not indFigs:
     # Gaussian fit (scaling needed)
     qScale = 10**9
     gaussParams = doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
-                                    minPeakHeight = 0.08 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
+                                    minPeakHeight = 0.2 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
                                     minCenterDist = 40, printResult = printResults, doPlot = True, saveFig = saveFigs)
     
     # LINEAR FIT OF CENTROIDS

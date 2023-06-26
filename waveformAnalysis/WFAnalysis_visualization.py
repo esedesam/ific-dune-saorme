@@ -13,7 +13,7 @@ from WFAnalysis_repo import *
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'sam_34v_3k_drknoise' # example: 'test1999'
+fileName = '20230621_34v_3k_ledtrig1' # example: 'test1999'
 
 filePath = zeroPath + 'results/' + fileName + '/'
 fileExt = '.csv'
