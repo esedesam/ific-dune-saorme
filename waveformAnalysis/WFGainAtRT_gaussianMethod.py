@@ -156,7 +156,8 @@ else:
     plt.xlabel('centroid / nC')
     plt.ylabel('sigma^2 / nC^2')
     plt.legend()
-    plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFit.png', bbox_inches = 'tight')
+    if saveFigs:
+        plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFit.png', bbox_inches = 'tight')
 
     # Quad fit of gaussian params
     model = QuadraticModel()
@@ -178,7 +179,37 @@ else:
     plt.xlabel('centroid / nC')
     plt.ylabel('sigma^2 / nC^2')
     plt.legend()
-    plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFitQuad.png', bbox_inches = 'tight')
+    if saveFigs:
+        plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFitQuad.png', bbox_inches = 'tight')
+
+    # Linear fit of linear part gaussian params
+    maxLin = 5
+    linSigmaList = sigmaList[0:maxLin]
+    linSigmaListError = sigmaListError[0:maxLin]
+    linCentroidList = centroidList[0:maxLin]
+    linCentroidListError = centroidListError[0:maxLin]
+    model = LinearModel()
+    params = model.make_params(m = 1, b = 0)
+    result = model.fit(linSigmaList, params, x = linCentroidList)
+    report = result.fit_report()
+    print(report)
+    if printResults:
+        reportName = figurePath + groupName + str(nBins) + 'FitLinPartCentroidsFitReport.txt'
+        if not isfile(reportName):
+            reportFile = open(reportName, 'x')
+        else:
+            reportFile = open(reportName, 'wt')
+        reportFile.write(report)
+        reportFile.close()
+    plt.figure()
+    # plt.plot(centroidList, sigmaList, '.', label = 'Gaussian fit results')
+    plt.errorbar(linCentroidList, linSigmaList, linSigmaListError, linCentroidListError, '.', label = 'Gaussian fit results (linear zone)')
+    plt.plot(linCentroidList, result.best_fit, '-', label = 'Linear fit')
+    plt.xlabel('centroid / nC')
+    plt.ylabel('sigma^2 / nC^2')
+    plt.legend()
+    if saveFigs:
+        plt.savefig(figurePath + groupName + str(nBins) + 'FitLinPartCentroidsFit.png', bbox_inches = 'tight')
 
 # END AND PRINT TIMER
 timerEnd = timer()

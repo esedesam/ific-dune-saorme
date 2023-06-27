@@ -27,7 +27,7 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'sam_34v_0vledtrigg' # example: '3k_sigtrig'
+fileName = '20230621_34v_3k_ledtrig2' # example: '3k_sigtrig'
 
 filePath = zeroPath + 'results/' + fileName + '/'
 fileExt = '.csv'
@@ -35,7 +35,7 @@ fileTag = 'Numbered'
 figurePath = filePath + 'figures/'
 
 # Optional figures(.png) and results(.txt) saving
-saveFigs = True
+saveFigs = False
 printResults = False
 
 voltageThreshold = 0.01 # 10 mV
@@ -56,13 +56,13 @@ WFCount = len(uniqueWFNumber)
 colNames = WFData.columns
 
 # WF + BASELINES PLOT
-indFigs = False # True -> Plot several WF | False -> Obtain gain
+indFigs = True # True -> Plot several WF | False -> Obtain gain
 WFCharge = np.empty(0)
 baselines = np.empty(0)
 qIdx = 0
 if indFigs:
     firstWF = 1
-    lastWF = 10
+    lastWF = 5
     forRange = range(firstWF - 1, lastWF)
 else:
     forRange = range(WFCount)
