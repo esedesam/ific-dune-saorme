@@ -5,7 +5,7 @@
 # Author: Samuel Ortega
 # Last Rev.: 07/06/2023
 
-import math, statistics, lmfit
+import math, statistics, lmfit, tekwfm
 import pandas as ps
 import matplotlib.pyplot as plt
 import numpy as np
@@ -58,25 +58,36 @@ def poisson1(k, lamb):
     '''poisson function, parameter lamb is the fit parameter'''
     return poisson.pmf(k, lamb)
 
-# loadAndNumberWFData: Load raw WF data and number each WF
+# preprocessWFData: Load raw WF data and number each WF
 # Inputs after readHeader only taken if readHeader = False
 def preprocessWFData(filePath, fileName, fileExt = '.csv', fileTag = 'Numbered', \
                         readHeader = True, headerLimit = 9, WFCount = 1000, recordLength = 1250, \
-                        yColName = 'MATH1', xUnits = "s", yUnits = "V"):
+                        processedFileExt = '.csv', yColName = 'MATH1', xUnits = "s", yUnits = "V"):
+    rawPath = filePath + 'rawData/' + fileName + fileExt
+    if fileExt == '.csv':
+        # Get header information
+        headerLimit = headerLimit - 1
+        if readHeader:
+            WFHeader = ps.read_csv(rawPath, nrows = headerLimit + 2, header = None)
+            for row in range(headerLimit):
+                if WFHeader.iloc[row,0] == 'Horizontal Units': xUnits = WFHeader.iloc[row,1]
+                elif WFHeader.iloc[row,0] == 'Record Length': recordLength = int( WFHeader.iloc[row,1] )
+                elif WFHeader.iloc[row,0] == 'Vertical Units': yUnits = WFHeader.iloc[row,1]
+                elif WFHeader.iloc[row,0] == 'FastFrame Count': WFCount = int( WFHeader.iloc[row,1] )
 
-    # Get header information
-    headerLimit = headerLimit - 1
-    if readHeader:
-        WFHeader = ps.read_csv( filePath + 'rawData/' + fileName + fileExt, nrows = headerLimit + 2, header = None )
-        for row in range(headerLimit):
-            if WFHeader.iloc[row,0] == 'Horizontal Units': xUnits = WFHeader.iloc[row,1]
-            elif WFHeader.iloc[row,0] == 'Record Length': recordLength = int( WFHeader.iloc[row,1] )
-            elif WFHeader.iloc[row,0] == 'Vertical Units': yUnits = WFHeader.iloc[row,1]
-            elif WFHeader.iloc[row,0] == 'FastFrame Count': WFCount = int( WFHeader.iloc[row,1] )
-
-    # Get WaveForms data
-    WFData = ps.read_csv(filePath + 'rawData/' + fileName + fileExt, header = headerLimit)
-
+        # Get WaveForms data
+        WFData = ps.read_csv(rawPath, header = headerLimit)
+    elif fileExt == '.wfm':
+        # Get waveforms data from binary file
+        volts, tstart, tscale, tfrac, tdatefrac, tdate = tekwfm.read_wfm(rawPath)
+        toff = tfrac * tscale
+        recordLength, WFCount = volts.shape
+        tstop = recordLength * tscale + tstart
+        t = np.linspace(tstart + toff, tstop + toff, num = recordLength, endpoint = False)
+        timeArray = t.flatten(order = 'F')
+        voltsArray = volts.flatten(order = 'F')
+        auxDict = {'TIME': timeArray, 'MATH1': voltsArray}
+        WFData = ps.DataFrame(data = auxDict)
     # WF numberation
     WFHeight = len(WFData.index)
     WFData['WFNumber'] = -1
@@ -103,7 +114,7 @@ def preprocessWFData(filePath, fileName, fileExt = '.csv', fileTag = 'Numbered',
         mkdir(figurePath)
     
     # Save to .csv
-    WFData.to_csv(resultsPath + fileName + fileTag + fileExt, index = False)
+    WFData.to_csv(resultsPath + fileName + fileTag + processedFileExt, index = False)
 
     return WFData
 
@@ -281,7 +292,7 @@ def fillQHistBins(WFCharge, nBins, filePath, fileName, saveData = True):
 
 def doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
                       minPeakHeight = np.inf, maxCenterVar = np.inf, minCenterDist = 0,\
-                      printResult = False, doPlot = True, saveFig = False):
+                      initSigma = 0.1, printResult = False, doPlot = True, saveFig = False):
     scaledCharge = np.asarray(qScale * FrecVsCharge['Q']) # Charge scaling
     frecuency = np.asarray(FrecVsCharge['F'])
 
@@ -293,7 +304,7 @@ def doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
         print('No peaks detected. Change minimum height (current: ' + str(minPeakHeight) + ')')
     else:
         centers = scaledCharge[histPeaks]
-        sigmas = np.ones(len(centers)) * 0.01 # 0.35 # 0.01
+        sigmas = np.ones(len(centers)) * initSigma # 0.35 # 0.01
 
         model = GaussianModel(prefix = 'g1_')
         for idx in range(1, histPeakNum):

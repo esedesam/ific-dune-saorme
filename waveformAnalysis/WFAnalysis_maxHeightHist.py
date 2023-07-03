@@ -41,18 +41,17 @@ WFCount = len(uniqueWFNumber)
 
 colNames = WFData.columns
 
-# WF GROUPED PLOT
-firstWF = 1
-lastWF = 3000
-for num in range(firstWF - 1, lastWF):
+# WF MAXIMUM HISTOGRAM
+maxArray = []
+for num in range(WFCount):
     condition = WFData[colNames[2]] == num
-    time = np.array(WFData.loc[condition, colNames[0]])
+    # time = np.array(WFData.loc[condition, colNames[0]])
     voltage = np.array(WFData.loc[condition, colNames[1]])
-    # plt.figure()
-    plt.plot(time, voltage, '-', label = 'WaveForm ' + str(num + 1))
-plt.xlabel('t / s')
-plt.ylabel('V / V')
+    maxArray.append(max(voltage))
+plt.hist(maxArray, bins = 100)
+plt.xlabel('Vmax / V')
+plt.ylabel('Cumulative frecuency')
 # plt.legend()
 if saveFigs:
-    plt.savefig(figurePath + fileName + '_WF' + str(firstWF) + '-' + str(lastWF) + '.png', bbox_inches = 'tight')
+    plt.savefig(figurePath + fileName + '_WFMaxsHist.png', bbox_inches = 'tight')
 plt.show(block = True)

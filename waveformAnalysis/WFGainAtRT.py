@@ -27,23 +27,24 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = '20230621_34v_3k_ledtrig2' # example: '3k_sigtrig'
+fileName = 'ch2_27_06_sigtrig1' # example: '3k_sigtrig'
 
 filePath = zeroPath + 'results/' + fileName + '/'
-fileExt = '.csv'
+fileExt = '.wfm'
 fileTag = 'Numbered'
+processedFileExt = '.csv'
 figurePath = filePath + 'figures/'
 
 # Optional figures(.png) and results(.txt) saving
-saveFigs = False
-printResults = False
+saveFigs = True
+printResults = True
 
 voltageThreshold = 0.01 # 10 mV
 
 #####################################################################
 
 # LOAD WAVEFORMS DATAFRAME
-preprocessedName = filePath + fileName + fileTag + fileExt
+preprocessedName = filePath + fileName + fileTag + processedFileExt
 if not isfile(preprocessedName):
     WFData = preprocessWFData(zeroPath, fileName, fileExt, fileTag)
 else:
@@ -56,7 +57,7 @@ WFCount = len(uniqueWFNumber)
 colNames = WFData.columns
 
 # WF + BASELINES PLOT
-indFigs = True # True -> Plot several WF | False -> Obtain gain
+indFigs = False # True -> Plot several WF | False -> Obtain gain
 WFCharge = np.empty(0)
 baselines = np.empty(0)
 qIdx = 0
@@ -82,7 +83,7 @@ for num in forRange:
         plt.figure()
         plt.plot(time, voltage, '-', label = 'Waveform ' + str(num + 1))
         plt.hlines(y = blMedian, xmin = time[0], xmax = time[-1],\
-                linestyles = 'dashed', colors = 'r', label = 'Median (points under %.3f V)' % customTh)
+                   linestyles = 'dashed', colors = 'r', label = 'Median (points under %.3f V)' % customTh)
         plt.plot(time[peaks], voltage[peaks], 'x', label = 'Detected peaks: %d' % len(peaks))
         plt.xlabel('t / s')
         plt.ylabel('V / V')
@@ -155,7 +156,7 @@ if not indFigs:
     baselineMedian = 10**3 * np.median(baselines)
     baselineStd = 10**3 * np.std(baselines)
     disp('baseline / mV = %0.4f +- %0.4f' % (baselineMedian, baselineStd))
-    nBins = int(len(WFCharge)/10)
+    nBins = int(len(WFCharge) / 20)
     plt.figure()
     plt.hist(WFCharge, bins = nBins, label = 'RT baseline\'d histogram')
     plt.xlabel('Q / C')
@@ -173,8 +174,9 @@ if not indFigs:
     # Gaussian fit (scaling needed)
     qScale = 10**9
     gaussParams = doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
-                                    minPeakHeight = 0.2 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
-                                    minCenterDist = 40, printResult = printResults, doPlot = True, saveFig = saveFigs)
+                                    minPeakHeight = 0.05 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
+                                    minCenterDist = 10, initSigma = 0.02,\
+                                    printResult = printResults, doPlot = True, saveFig = saveFigs)
     
     # LINEAR FIT OF CENTROIDS
     doCentroidsLinearFit(gaussParams, qScale, nBins, figurePath, fileName,\

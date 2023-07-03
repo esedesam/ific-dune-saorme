@@ -19,11 +19,12 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'test1999' # example: 'test1999'
+fileName = 'mas_34v_3k_131v' # example: 'test1999'
 
 filePath = zeroPath + 'results/' + fileName + '/'
 fileExt = '.csv'
 fileTag = 'Numbered'
+processedFileExt = '.csv'
 figurePath = filePath + 'figures/'
 
 # Optional figures(.png) and results(.txt) saving
@@ -37,7 +38,7 @@ qScale = 10**9
 #####################################################################
 
 # LOAD WAVEFORMS DATAFRAME
-preprocessedName = filePath + fileName + fileTag + fileExt
+preprocessedName = filePath + fileName + fileTag + processedFileExt
 if not isfile(preprocessedName):
     WFData = preprocessWFData(zeroPath, fileName, fileExt, fileTag)
 else:

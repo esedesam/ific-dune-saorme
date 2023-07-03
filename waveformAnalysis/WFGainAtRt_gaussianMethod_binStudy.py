@@ -29,20 +29,24 @@ zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
 #                 'sam_34v_3k_155v', 'sam_34v_3k_160v', 'sam_34v_3k_165v', 'sam_34v_3k_170v', 'sam_34v_3k_180v',\
 #                 'sam_34v_3k_185v', 'sam_34v_3k_200v', 'sam_34v_3k_210v', 'sam_34v_3k_220v', 'sam_34v_3k_250v']
 # voltList = [1.31, 1.35, 1.40, 1.45, 1.50, 1.55, 1.60, 1.65, 1.70, 1.80, 1.85, 2.00, 2.10, 2.20, 2.50]
-groupName = 'g_rt_20230621_ind'
-fileNameList = ['20230621_34v_3k_131v', '20230621_34v_3k_140v', '20230621_34v_3k_150v',\
-                '20230621_34v_3k_160v', '20230621_34v_3k_170v', '20230621_34v_3k_180v',\
-                '20230621_34v_3k_200v', '20230621_34v_3k_210v', '20230621_34v_3k_220v']
-voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 2.00, 2.10, 2.20]
+# groupName = 'g_rt_20230621_ind'
+# fileNameList = ['20230621_34v_3k_131v', '20230621_34v_3k_140v', '20230621_34v_3k_150v',\
+#                 '20230621_34v_3k_160v', '20230621_34v_3k_170v', '20230621_34v_3k_180v',\
+#                 '20230621_34v_3k_200v', '20230621_34v_3k_210v', '20230621_34v_3k_220v']
+# voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 2.00, 2.10, 2.20]
 # groupName = 'g_rt_mas'
 # fileNameList = ['mas_34v_3k_131v', 'mas_34v_3k_140v', 'mas_34v_3k_150v',\
 #                 'mas_34v_3k_160v', 'mas_34v_3k_170v', 'mas_34v_3k_180v',\
 #                 'mas_34v_3k_190v', 'mas_34v_3k_200v', 'mas_34v_3k_210v']
 # voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 1.90, 2.00, 2.10]
+groupName = 'g_rt_samch2_ind'
+fileNameList = ['ch2_27_06_180v']
+voltList = [1.80]
 
 filePath = zeroPath + 'results/' + groupName + '/'
 fileExt = '.csv'
 fileTag = 'Numbered'
+processedFileExt = '.csv'
 figurePath = filePath + 'figures/'
 
 if not isdir(filePath):
@@ -68,7 +72,7 @@ sigmaList = np.zeros(len(fileNameList))
 for idx, fileName in enumerate(fileNameList):
     # Preprocessing
     dataPath = zeroPath + 'results/' + fileName + '/'
-    preprocessedName = dataPath + fileName + fileTag + fileExt
+    preprocessedName = dataPath + fileName + fileTag + processedFileExt
     if not isfile(preprocessedName):
         WFData = preprocessWFData(zeroPath, fileName, fileExt, fileTag)
     else:
@@ -83,7 +87,7 @@ for idx, fileName in enumerate(fileNameList):
                                                   dataPath, fileName, fileTag, fileExt, saveCorrV = False)
     # Calculate charge
     WFCharge = getChargeAndHist(WFData, colNames, WFCount, uniqueWFNumber, nBins,\
-                                figurePath, fileName, doHist = False, saveFig = saveFigs)
+                                figurePath, fileName, doHist = True, saveFig = saveFigs)
     # Get histogram data
     frec, binEdges = np.histogram(WFCharge, bins = nBins)
     binCenters = np.zeros(len(binEdges) - 1)
@@ -125,28 +129,29 @@ for idx, fileName in enumerate(fileNameList):
     sigmaList[idx] = fitParams['sigma'] **2
     sigmaListError[idx] = fitCovMatrix[2, 2] * 2 * fitParams['sigma']
 # Linear fit of gaussian params
-model = LinearModel()
-params = model.make_params(m = 1, b = 0)
-result = model.fit(sigmaList, params, x = centroidList)
-report = result.fit_report()
-print(report)
-if printResults:
-    reportName = figurePath + groupName + str(nBins) + 'FitCentroidsFitReport.txt'
-    if not isfile(reportName):
-        reportFile = open(reportName, 'x')
-    else:
-        reportFile = open(reportName, 'wt')
-    reportFile.write(report)
-    reportFile.close()
-plt.figure()
-# plt.plot(centroidList, sigmaList, '.', label = 'Gaussian fit results')
-plt.errorbar(centroidList, sigmaList, sigmaListError, centroidListError, '.', label = 'Gaussian fit results')
-plt.plot(centroidList, result.best_fit, '-', label = 'Linear fit')
-plt.xlabel('centroid / nC')
-plt.ylabel('sigma^2 / nC^2')
-plt.legend()
-if saveFigs:
-    plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFit.png', bbox_inches = 'tight')
+if False:
+    model = LinearModel()
+    params = model.make_params(m = 1, b = 0)
+    result = model.fit(sigmaList, params, x = centroidList)
+    report = result.fit_report()
+    print(report)
+    if printResults:
+        reportName = figurePath + groupName + str(nBins) + 'FitCentroidsFitReport.txt'
+        if not isfile(reportName):
+            reportFile = open(reportName, 'x')
+        else:
+            reportFile = open(reportName, 'wt')
+        reportFile.write(report)
+        reportFile.close()
+    plt.figure()
+    # plt.plot(centroidList, sigmaList, '.', label = 'Gaussian fit results')
+    plt.errorbar(centroidList, sigmaList, sigmaListError, centroidListError, '.', label = 'Gaussian fit results')
+    plt.plot(centroidList, result.best_fit, '-', label = 'Linear fit')
+    plt.xlabel('centroid / nC')
+    plt.ylabel('sigma^2 / nC^2')
+    plt.legend()
+    if saveFigs:
+        plt.savefig(figurePath + groupName + str(nBins) + 'FitCentroidsFit.png', bbox_inches = 'tight')
 
 # END AND PRINT TIMER
 timerEnd = timer()

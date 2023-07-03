@@ -34,15 +34,20 @@ zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
 #                 '20230621_34v_3k_160v', '20230621_34v_3k_170v', '20230621_34v_3k_180v',\
 #                 '20230621_34v_3k_200v', '20230621_34v_3k_210v', '20230621_34v_3k_220v']
 # voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 2.00, 2.10, 2.20]
-groupName = 'g_rt_mas'
-fileNameList = ['mas_34v_3k_131v', 'mas_34v_3k_140v', 'mas_34v_3k_150v',\
-                'mas_34v_3k_160v', 'mas_34v_3k_170v', 'mas_34v_3k_180v',\
-                'mas_34v_3k_190v', 'mas_34v_3k_200v', 'mas_34v_3k_210v']
-voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 1.90, 2.00, 2.10]
+# groupName = 'g_rt_mas'
+# fileNameList = ['mas_34v_3k_131v', 'mas_34v_3k_140v', 'mas_34v_3k_150v',\
+#                 'mas_34v_3k_160v', 'mas_34v_3k_170v', 'mas_34v_3k_180v',\
+#                 'mas_34v_3k_190v', 'mas_34v_3k_200v', 'mas_34v_3k_210v']
+# voltList = [1.31, 1.40, 1.50, 1.60, 1.70, 1.80, 1.90, 2.00, 2.10]
+groupName = 'g_rt_samch2'
+fileNameList = ['ch2_27_06_130v', 'ch2_27_06_140v', 'ch2_27_06_150v', 'ch2_27_06_160v',\
+                'ch2_27_06_170v', 'ch2_27_06_190v', 'ch2_27_06_200v']
+voltList = [1.30, 1.40, 1.50, 1.60, 1.70, 1.90, 2.00]
 
 filePath = zeroPath + 'results/' + groupName + '/'
-fileExt = '.csv'
+fileExt = '.wfm'
 fileTag = 'Numbered'
+processedFileExt = '.csv'
 figurePath = filePath + 'figures/'
 
 if not isdir(filePath):
@@ -55,7 +60,7 @@ saveFigs = True
 printResults = True
 
 voltageThreshold = 0.01
-nBins = 200
+nBins = 100
 qScale = 10**9
 
 #####################################################################
@@ -70,7 +75,7 @@ plt.figure()
 for idx, fileName in enumerate(fileNameList):
     # Preprocessing
     dataPath = zeroPath + 'results/' + fileName + '/'
-    preprocessedName = dataPath + fileName + fileTag + fileExt
+    preprocessedName = dataPath + fileName + fileTag + processedFileExt
     if not isfile(preprocessedName):
         WFData = preprocessWFData(zeroPath, fileName, fileExt, fileTag)
     else:
