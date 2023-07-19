@@ -27,5 +27,7 @@ for i in range(len(x)):
     
 plt.savefig('./waveformAnalysis/utilities/gainResultsPlot.png', bbox_inches = 'tight')
 
+plt.figure()
+plt.boxplot(x)
 
 plt.show(block = True)

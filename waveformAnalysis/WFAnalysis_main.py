@@ -19,7 +19,7 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'mas_34v_3k_131v' # example: 'test1999'
+fileName = 'dune_darkn' # example: 'test1999'
 
 filePath = zeroPath + 'results/' + fileName + '/'
 fileExt = '.csv'

@@ -58,6 +58,31 @@ def poisson1(k, lamb):
     '''poisson function, parameter lamb is the fit parameter'''
     return poisson.pmf(k, lamb)
 
+class WFAnalysis:
+    def __init__(self, zeroPath, fileName, fileExt = '.wfm', resultsTag = 'results/', figuresTag = 'figures/',\
+                 saveFigs = False, printResults = False) -> None:
+        self.zeroPath = zeroPath
+        self.fileName = fileName
+        self.filePath = zeroPath + resultsTag + fileName + '/'
+        self.fileExt = fileExt
+        self.figurePath = self.filePath + figuresTag
+        self.saveFigs = saveFigs
+        self.printResults = printResults
+
+        def getWFData(self, fileTag = 'Numbered', processedFileExt = '.csv'):
+            preprocessedName = self.filePath + self.fileName + fileTag + processedFileExt
+            if not isfile(preprocessedName):
+                WFData = preprocessWFData(self.zeroPath, self.fileName, self.fileExt, fileTag)
+            else:
+                WFData = ps.read_csv(preprocessedName, header = 0)
+
+            WFHeight = len(WFData.index)
+            uniqueWFNumber = set(WFData['WFNumber'])
+            WFCount = len(uniqueWFNumber)
+
+            colNames = WFData.columns
+            return WFData, colNames, WFHeight, WFCount
+
 # preprocessWFData: Load raw WF data and number each WF
 # Inputs after readHeader only taken if readHeader = False
 def preprocessWFData(filePath, fileName, fileExt = '.csv', fileTag = 'Numbered', \
@@ -97,11 +122,12 @@ def preprocessWFData(filePath, fileName, fileExt = '.csv', fileTag = 'Numbered',
         for WFIdx in range(WFCount):
             WFInterval = WFIdx * recordLength + interval
             WFData.iloc[WFInterval, 2] = WFIdx
+            # Si hay algun nan -> quitarlo
     else:
         auxCount = 0
         idxInf = 0
         for idx in range(0, WFHeight - 1):
-            if WFData.iloc[idx, 0] >  WFData.iloc[idx + 1, 0]:
+            if WFData.iloc[idx, 0] > WFData.iloc[idx + 1, 0]:
                 WFData.iloc[idxInf : idx, 2] = auxCount
                 auxCount = auxCount + 1
                 idxInf = idx + 1
@@ -242,18 +268,19 @@ def doBaseLineCorrectionV2(WFData, colNames, WFHeight, uniqueWFNumber, voltageTh
     return WFData, colNames
 
 def getChargeAndHist(WFData, colNames, WFCount, uniqueWFNumber, nBins,\
-                     figurePath, fileName, doHist = True, saveFig = False):
+                     figurePath, fileName, rValue = 50, doHist = True, saveFig = False):
     WFCharge = np.zeros(WFCount)
     for idx, num in enumerate(uniqueWFNumber):
         condition = WFData[colNames[2]] == num
         time = np.array(WFData.loc[condition, colNames[0]])
         voltage = np.array(WFData.loc[condition, colNames[3]])
+        intensity = voltage / rValue
         if fileName == 'pruebaMass1_0_34_00': # Custom correction for weird high charge value
-            charge = simpson(voltage, time)
+            charge = simpson(intensity, time)
             if charge < 4e-7:
                 WFCharge[idx] = charge
         else:
-            charge = simpson(voltage, time)
+            charge = simpson(intensity, time)
             if charge < np.inf:
                 WFCharge[idx] = charge
 

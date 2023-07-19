@@ -13,7 +13,7 @@ from WFAnalysis_repo import *
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'ch2_27_06_180v' # example: 'test1999'
+fileName = 'test1999' # example: 'test1999'
 
 filePath = zeroPath + 'results/' + fileName + '/'
 fileExt = '.wfm'
@@ -43,7 +43,7 @@ colNames = WFData.columns
 
 # WF GROUPED PLOT
 firstWF = 1
-lastWF = 3000
+lastWF = 10
 for num in range(firstWF - 1, lastWF):
     condition = WFData[colNames[2]] == num
     time = np.array(WFData.loc[condition, colNames[0]])
