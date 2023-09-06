@@ -113,6 +113,10 @@ def preprocessWFData(filePath, fileName, fileExt = '.csv', fileTag = 'Numbered',
         voltsArray = volts.flatten(order = 'F')
         auxDict = {'TIME': timeArray, 'MATH1': voltsArray}
         WFData = ps.DataFrame(data = auxDict)
+    # Force numeric type and drop NaNs and +/- inf
+    WFData['MATH1'] = ps.to_numeric(WFData['MATH1'], errors = 'coerce')
+    WFData = WFData.dropna()
+    WFData = WFData[(WFData.MATH1 != float('-inf')) & (WFData.MATH1 != float('inf'))]
     # WF numberation
     WFHeight = len(WFData.index)
     WFData['WFNumber'] = -1
@@ -122,7 +126,6 @@ def preprocessWFData(filePath, fileName, fileExt = '.csv', fileTag = 'Numbered',
         for WFIdx in range(WFCount):
             WFInterval = WFIdx * recordLength + interval
             WFData.iloc[WFInterval, 2] = WFIdx
-            # Si hay algun nan -> quitarlo
     else:
         auxCount = 0
         idxInf = 0

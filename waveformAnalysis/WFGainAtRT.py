@@ -27,13 +27,15 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'ch2_27_06_sigtrig1' # example: '3k_sigtrig'
+fileName = 'mas_34v_3k_ledtrig2' # example: '3k_sigtrig'
 
 filePath = zeroPath + 'results/' + fileName + '/'
-fileExt = '.wfm'
+fileExt = '.csv'
 fileTag = 'Numbered'
 processedFileExt = '.csv'
 figurePath = filePath + 'figures/'
+
+rValue = 50
 
 # Optional figures(.png) and results(.txt) saving
 saveFigs = True
@@ -134,7 +136,8 @@ for num in forRange:
             if indFigs:
                 plt.plot(peakTime, peakVolt, '-', label = 'Peak %d' % qIdx)
             try:
-                WFChargeAux = simpson(peakVolt, peakTime)
+                intensity = peakVolt / rValue
+                WFChargeAux = simpson(intensity, peakTime)
             except:
                 disp('Error integrating peak no. %d in wf no. %d.' % (qIdx, num))
             else:
@@ -174,8 +177,8 @@ if not indFigs:
     # Gaussian fit (scaling needed)
     qScale = 10**9
     gaussParams = doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
-                                    minPeakHeight = 0.05 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
-                                    minCenterDist = 10, initSigma = 0.02,\
+                                    minPeakHeight = 0.15 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
+                                    minCenterDist = 15, initSigma = 0.0002,\
                                     printResult = printResults, doPlot = True, saveFig = saveFigs)
     
     # LINEAR FIT OF CENTROIDS
