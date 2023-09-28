@@ -13,16 +13,16 @@ from WFAnalysis_repo import *
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'test1999' # example: 'test1999'
+fileName = '495nd39v25_9' # example: 'test1999'
 
 filePath = zeroPath + 'results/' + fileName + '/'
-fileExt = '.wfm'
+fileExt = '.csv'
 fileTag = 'Numbered'
 processedFileExt = '.csv'
 figurePath = filePath + 'figures/'
 
 # Optional figures(.png) saving
-saveFigs = False
+saveFigs = True
 
 voltageThreshold = 0.01 # 10 mV
 
@@ -43,7 +43,7 @@ colNames = WFData.columns
 
 # WF GROUPED PLOT
 firstWF = 1
-lastWF = 10
+lastWF = 2000
 for num in range(firstWF - 1, lastWF):
     condition = WFData[colNames[2]] == num
     time = np.array(WFData.loc[condition, colNames[0]])

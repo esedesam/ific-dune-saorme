@@ -278,12 +278,11 @@ def getChargeAndHist(WFData, colNames, WFCount, uniqueWFNumber, nBins,\
         time = np.array(WFData.loc[condition, colNames[0]])
         voltage = np.array(WFData.loc[condition, colNames[3]])
         intensity = voltage / rValue
+        charge = simpson(intensity, time)
         if fileName == 'pruebaMass1_0_34_00': # Custom correction for weird high charge value
-            charge = simpson(intensity, time)
             if charge < 4e-7:
                 WFCharge[idx] = charge
         else:
-            charge = simpson(intensity, time)
             if charge < np.inf:
                 WFCharge[idx] = charge
 
@@ -331,7 +330,7 @@ def doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
     print('No. of peaks detected in charge histogram: %d' % histPeakNum)
 
     if histPeakNum < 1:
-        print('No peaks detected. Change minimum height (current: ' + str(minPeakHeight) + ')')
+        raise KeyError('Error: No peaks detected. Change minimum height (current: ' + str(minPeakHeight) + ')')
     else:
         centers = scaledCharge[histPeaks]
         sigmas = np.ones(len(centers)) * initSigma # 0.35 # 0.01
@@ -382,8 +381,8 @@ def getQScalePrefix(qScale):
     return prefix
 
 def doCentroidsLinearFit(gaussParams, qScale, nBins, figurePath, fileName,\
-                         printResult = False, doPlot = True, saveFig = False):
-    numFittedPeaks = int(len(gaussParams) / 3)
+                         ignoredLastPeaks = 0, printResult = False, doPlot = True, saveFig = False):
+    numFittedPeaks = int(len(gaussParams) / 3) - ignoredLastPeaks
     if numFittedPeaks > 1:
         auxNums = np.zeros(numFittedPeaks)
         auxCentroids = np.zeros(numFittedPeaks)

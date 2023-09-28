@@ -19,7 +19,7 @@ timerStart = timer()
 
 # SET-UP
 zeroPath = 'D:/ific-dune-saorme/waveformAnalysis/' # Change to user repo path
-fileName = 'dune_darkn' # example: 'test1999'
+fileName = '495nd39v25_9' # example: 'test1999'
 
 filePath = zeroPath + 'results/' + fileName + '/'
 fileExt = '.csv'
@@ -28,8 +28,8 @@ processedFileExt = '.csv'
 figurePath = filePath + 'figures/'
 
 # Optional figures(.png) and results(.txt) saving
-saveFigs = True
-printResults = True
+saveFigs = False
+printResults = False
 
 voltageThreshold = 0.01 # 10 mV
 nBins = 300
@@ -71,8 +71,8 @@ else:
     FrecVsCharge = ps.read_csv(QHistData, header = 0)
 
 gaussParams = doHistGaussianFit(FrecVsCharge, qScale, nBins, figurePath, fileName,\
-                                minPeakHeight = 0.02 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
-                                minCenterDist = 20, printResult = printResults, doPlot = True, saveFig = saveFigs)
+                                minPeakHeight = 0.01 * max(FrecVsCharge['F']), maxCenterVar = 10**-9 * qScale,\
+                                minCenterDist = 10, printResult = printResults, doPlot = True, saveFig = saveFigs)
 
 # LINEAR FIT OF CENTROIDS
 doCentroidsLinearFit(gaussParams, qScale, nBins, figurePath, fileName,\
